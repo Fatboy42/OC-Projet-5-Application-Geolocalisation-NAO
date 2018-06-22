@@ -162,4 +162,30 @@ class AdminSpaceController extends Controller
         $this->currentUserId = $this->getUser()->getId();
         $this->currentUsername = $this->getUser()->getUsername();
     }
+
+    /**
+     * @Route("/membersToValidate")
+     * @param Environment $twig
+     * @return Response
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function membersToValidate(Environment $twig){
+
+        $this->getCurrentUser();
+
+        $users = $this->getDoctrine()
+            ->getRepository(AppUsers::class);
+        $membersToValidate = $users->findBy([
+            'roleToValidate' => true //propriété à ajouter dans l'entité AppUsers de type BOOLEEN
+        ]);
+
+
+        return new Response($twig->render('pages/adminSpace/membersToValidate.html.twig',[
+            'username' => $this->currentUsername,
+            'membersToValidate' => $membersToValidate
+        ]));
+    }
+
 }
